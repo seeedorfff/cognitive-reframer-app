@@ -10,6 +10,20 @@ app = FastAPI()
 def root():
     return {"status": "API is running"}
 
+# GET /entries endpoint - retrieve all journal entries
+@app.get("/entries")
+async def get_entries():
+    try:
+        # Query all entries from the database, ordered by created_at descending
+        result = supabase.table("journal_entries").select("*").order("created_at", desc=True).execute()
+        
+        # Return the entries
+        return result.data
+        
+    except Exception as e:
+        # Handle database errors gracefully
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
 # POST /entries endpoint
 @app.post("/entries")
 async def create_entry(entry: JournalEntryCreate):
