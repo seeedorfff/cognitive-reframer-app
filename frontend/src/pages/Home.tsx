@@ -27,6 +27,29 @@ const Home: React.FC = () => {
         fetchEntries();
     }, []);
 
+    const handleAddEntry = async (entryContent: string) => {
+        try {
+            const response = await fetch('/api/entries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: entryContent }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add entry');
+            }
+
+            const newEntryResponse = await response.json();
+            const newEntry = newEntryResponse.data;
+
+            setEntries(prevEntries => [newEntry, ...prevEntries]);
+        } catch (error) {
+            console.error('Error creating new entry:', error);
+        }
+    };
+
   return (
     <div className="bg-gray-900 text-white min-h-screen pt-12">
       <div className="container mx-auto max-w-2xl px-4">
@@ -40,7 +63,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* We are now displaying the JournalForm component here */}
-        <JournalForm />
+        <JournalForm onAddEntry={handleAddEntry}/>
 
         {loading ? (
             <p className="text-center text-gray-400 mt-10">Loading entries...</p>

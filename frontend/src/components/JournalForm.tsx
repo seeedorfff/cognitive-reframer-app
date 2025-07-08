@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 
-const JournalForm: React.FC = () => {
+interface JournalFormProps {
+    onAddEntry: (content: string) => void;
+}
+function JournalForm({ onAddEntry }: JournalFormProps) {
   const [content, setContent] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Content submitted:', content);
+    if (!content.trim()) return;
+
+    onAddEntry(content);
+    setContent('');
   };
 
   return (
